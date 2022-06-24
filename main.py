@@ -10,7 +10,7 @@ def main():
     window.run_button("Select")
     window.run_window()
     modfile = modlist.select_mod(window.press_button())
-    subprocess.call(modfile, shell=True)
+    subprocess.call(modfile)
     
 if __name__ == "__main__":
     main()

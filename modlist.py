@@ -1,15 +1,25 @@
 import os
+from tkinter import filedialog as fd
 
 class ModList:
     def __init__(self):
-        self.path_mods = "C:\\Users\\aleja\\Documents\\Friday Night Funkin"
-        files = []
-        for (dirpath, dirnames, filenames) in os.walk(self.path_mods):
-            files.extend(filenames)
+        self.mods_folder = fd.askdirectory()
+        mods = []
+        for (dirpath, dirnames, filenames) in os.walk(self.mods_folder):
+            mods.extend(dirnames)
             break
-        
-        files = [(element.replace(".lnk", "")) for element in files]
-        self.modfiles = files
+
+        mod_execs = []
+        for (dirpath, dirnames, filenames) in os.walk(mods):
+            mod_execs.extend(filenames)
+            break
+
+        for element in mod_execs:
+            if ".exe" not in element:
+                mod_execs.remove(element)
+
+        self.modnames = mods
+        self.modfiles = mod_execs
     
     def print_mods(self):
         print(self.modfiles)
