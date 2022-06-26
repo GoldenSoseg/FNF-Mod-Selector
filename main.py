@@ -1,16 +1,17 @@
 from window import Window
 from modlist import ModList
-import subprocess
 
 def main():
-    modlist = ModList()
     window = Window(640, 480, "Friday Night Funkin' Mod Selector")
+    dir = window.askdirectory()
+    modlist = ModList(dir)
     window.add_text("Choose a mod")
-    window.combobox_run(modlist.modfiles)
+    window.combobox_run(modlist.modnames)
     window.run_button("Select")
     window.run_window()
-    modfile = modlist.select_mod(window.press_button())
-    subprocess.call(modfile)
+
+    modlist.select_mod(window.modsvar.get())
+    
     
 if __name__ == "__main__":
     main()

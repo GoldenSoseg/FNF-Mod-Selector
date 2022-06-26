@@ -1,11 +1,19 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.filedialog as tkfd
 
 class Window:
     def __init__(self, w, h, ttl):
         self.window = tk.Tk()
         self.window.geometry(str(w) + "x" + str(h))
         self.window.title(ttl)
+
+    def askdirectory(self):
+        root = tk.Tk()
+        directory = tkfd.askdirectory()
+        root.withdraw()
+        
+        return directory
 
     def run_window(self):
         self.window.mainloop()
@@ -25,6 +33,11 @@ class Window:
         self.button = ttk.Button(self.window, text=txt, command=self.press_button)
         self.button.pack()
 
+    def quit(self):
+        self.window.destroy()
+        self.window.quit()
+        
+
     def press_button(self):
-        option_select = self.modsvar.get()
-        return option_select
+        self.quit()
+        
