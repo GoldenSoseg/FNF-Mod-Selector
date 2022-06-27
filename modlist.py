@@ -1,5 +1,6 @@
 import os
-import subprocess
+from subprocess import run
+from shortcut import createShortcut
 
 class ModList:
     def __init__(self, folder):
@@ -38,9 +39,11 @@ class ModList:
     def select_mod(self, mod_selected):
         for element in self.modfiles:
             if mod_selected in element:
-                cmd = "cd " + self.mods_folder + "/" + mod_selected
-                os.system(cmd)
-                filename = '\"\"' + element.removeprefix(cmd.removesuffix("cd ") + "/") + '\"\"'
-                os.system(filename)
+                lnk_path = element.removesuffix(".exe") + ".lnk"
+                folder = self.mods_folder + "/" + mod_selected
+
+                createShortcut(lnk_path, element, folder, element)
+                os.system('cmd /c "' + lnk_path + '"')
+                os.remove(lnk_path)
                 break
         
