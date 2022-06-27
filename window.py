@@ -8,13 +8,6 @@ class Window:
         self.window.geometry(str(w) + "x" + str(h))
         self.window.title(ttl)
 
-    def askdirectory(self):
-        root = tk.Tk()
-        directory = tkfd.askdirectory()
-        root.withdraw()
-        
-        return directory
-
     def run_window(self):
         self.window.mainloop()
 
