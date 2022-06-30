@@ -1,49 +1,97 @@
+from Mod import Mod
 import os
-from subprocess import run
-from shortcut import createShortcut
+import os.path as op
 
 class ModList:
-    def __init__(self, folder):
-        self.mods_folder = folder
-        mods = []
-        for (dirpath, dirnames, filenames) in os.walk(self.mods_folder):
-            mods.extend(dirnames)
+    def __init__(self, supportedMods, folder):
+        self.mods = []
+        directoriesTemp = []
+        for (dirpath, dirnames, filenames) in os.walk(folder):
+            directoriesTemp.extend(dirnames)
             break
-
-        mod_execs = []
-        for element in mods:
-            for (dirpath, dirnames, filenames) in os.walk(self.mods_folder + "/" + element):
-                mod_execs.extend(filenames)
-                break
-
-        self.modfiles = []
-        for element in mod_execs:
-            #Non-Game executable files
+        
+        directories = []
+        names = []
+        fullnames = []
+        for name in directoriesTemp:
+            i = 0
+            while i < len(supportedMods):
+                if name in supportedMods[i][0]:
+                    names.append(name)
+                    directories.append(folder + "/" + name)
+                    fullnames.append(supportedMods[i][1])
+                    break
+                i += 1
+        
+        exefilesTemp = []
+        for element in directories:
+            for (dirpath, dirnames, filenames) in os.walk(element):
+                exefilesTemp.extend(filenames)
+        
+        exefiles = []
+        for element in exefilesTemp:
             if "UnityCrashHandler64.exe" in element: continue #Vs Hecker
             elif "FE-CrashDialog.exe" in element: continue #SMB Funk Mix/Game Over
 
             else:
                 if ".exe" in element:
-                    self.modfiles.append(element)
-
-        i = 0
-        while i < len(mods):
-            self.modfiles[i] = self.mods_folder + "/" + mods[i] + "/" + self.modfiles[i]
-            i= i + 1
-
-        self.modnames = mods
+                    exefiles.append(element)
     
-    def print_mods(self):
-        print(self.modfiles)
-
-    def select_mod(self, mod_selected):
-        for element in self.modfiles:
-            if mod_selected in element:
-                lnk_path = element.removesuffix(".exe") + ".lnk"
-                folder = self.mods_folder + "/" + mod_selected
-
-                createShortcut(lnk_path, element, folder, element)
-                os.system('cmd /c "' + lnk_path + '"')
-                os.remove(lnk_path)
-                break
+        i = 0            
+        while i < len(exefiles):
+            exefiles[i] = directories[i] + "/" + exefiles[i]
+            i += 1
         
+        
+        banners = []
+        icons = []
+        
+        for element in names:
+            banners.append("modData/banners/" + element + ".png")
+            icons.append("modData/icons/" + element + ".png")
+            
+        i = 0
+        while i < len(names):
+            if not op.exists(banners[i]):
+                if not op.exists(icons[i]):
+                    mod = Mod(names[i], directories[i], fullnames[i], "modData/defaultBanner.png", "modData/defaultIcon.png", exefiles[i])
+                    self.mods.append(mod)
+                else:
+                    mod = Mod(names[i], directories[i], fullnames[i], "modData/defaultBanner.png", icons[i], exefiles[i])
+                    self.mods.append(mod)
+            elif not op.exists(icons[i]):
+                mod = Mod(names[i], directories[i], fullnames[i], banners[i], "modData/defaultIcon.png", exefiles[i])
+                self.mods.append(mod)
+            else:
+                mod = Mod(names[i], directories[i], fullnames[i], banners[i], icons[i], exefiles[i])
+                self.mods.append(mod)
+            i += 1
+        
+    def displayNames(self):
+        displayNames = []
+        for element in self.mods:
+            name = element.getFullName()
+            displayNames.append(name)
+            
+        return displayNames
+    
+    def listBanners(self):
+        bannerList = []
+        for element in self.mods:
+            banner = element.getBanner()
+            bannerList.append(banner)
+            
+        return bannerList
+            
+    def listIcons(self):
+        iconList = []
+        for element in self.mods:
+            icon = element.getIcon()
+            iconList.append(icon)
+        
+        return iconList
+    
+    def getMod(self, n):
+        mod = self.mods[n]
+        
+        return mod
